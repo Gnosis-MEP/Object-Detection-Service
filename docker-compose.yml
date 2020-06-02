@@ -8,6 +8,7 @@ services:
   service:
     image: registry.insight-centre.org/sit/mps/object-detection-service:dev
     command: echo "ok"
+    runtime: nvidia
     build:
       context: '.'
       dockerfile: 'Dockerfile'

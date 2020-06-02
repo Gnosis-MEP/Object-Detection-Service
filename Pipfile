@@ -15,9 +15,14 @@ flake8 = "*"
 
 [packages]
 walrus = "==0.7.1"
-python-decouple = "==3.1"
 event-service-utils = "*"
+pillow = "==5.4.1"
+numpy = "==1.16.4"
+tensorflow-gpu = "==1.14.0"
+opencv-python-headless = "==4.0.0.21"
+python-decouple = "==3.1"
 object_detection_service = {path = ".",editable = true}
+
 
 [requires]
 python_version = "3.6"

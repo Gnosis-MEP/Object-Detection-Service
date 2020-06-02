@@ -4,6 +4,24 @@ from event_service_utils.logging.decorators import timer_logger
 from event_service_utils.services.tracer import BaseTracerService
 from event_service_utils.tracing.jaeger import init_tracer
 
+# This package is the one inside tf_od_models folder
+from object_detection.coco_based_od import COCOBasedModel
+
+
+
+
+
+
+def evaluate_coco(
+        model_name='ssd_mobilenet_v1_coco_2017_11_17',
+        tf_gpu_fraction=0.75):
+
+    model = COCOBasedModel(model_name=model_name, tf_gpu_fraction=tf_gpu_fraction, lazy_setup=False)
+
+
+    self.model.stop()
+
+
 
 class ObjectDetectionService(BaseTracerService):
     def __init__(self,
@@ -22,6 +40,10 @@ class ObjectDetectionService(BaseTracerService):
         )
         self.cmd_validation_fields = ['id', 'action']
         self.data_validation_fields = ['id']
+        self.setup_model(model_name, tf_gpu_fraction)
+
+    def setup_model(self, model_name, tf_gpu_fraction):
+        self.model = COCOBasedModel(model_name=model_name, tf_gpu_fraction=tf_gpu_fraction, lazy_setup=False)
 
     # def send_event_to_somewhere(self, event_data):
     #     self.logger.debug(f'Sending event to somewhere: {event_data}')
