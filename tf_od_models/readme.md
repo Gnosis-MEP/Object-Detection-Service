@@ -1,0 +1,2 @@
+this directory is a cut-off from the https://github.com/Alro10/realtime_object_detection repository, but with only the very necessary components needed to run the models.
+Unfortunatly, because of the compiled protobuffers used for some label-to-class-id mapping, the directory structure cant be changed. This is why I'm keeping this as a separate python package, just so that we don't mess with this structure.

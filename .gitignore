@@ -114,3 +114,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+tf_od_models/object_detection/models/*

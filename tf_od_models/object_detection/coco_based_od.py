@@ -17,7 +17,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 def download_model(model_name=None, model_path=None):
     # print(f'CURRENT_DIR: {CURRENT_DIR}')
     if model_name is None:
-        model_name = 'ssd_mobilenet_v11_coco'
+        model_name = 'ssd_mobilenet_v1_coco_2017_11_17'
     if model_path is None:
         model_path = os.path.join(CURRENT_DIR, 'models', model_name, 'frozen_inference_graph.pb')
 
@@ -41,11 +41,11 @@ def download_model(model_name=None, model_path=None):
 
 def load_frozenmodel(model_name=None, model_path=None, label_path=None, num_classes=90):
     if model_name is None:
-            model_name = 'ssd_mobilenet_v11_coco'
+        model_name = 'ssd_mobilenet_v11_coco'
     if model_path is None:
-            model_path = os.path.join(CURRENT_DIR, 'models', model_name, 'frozen_inference_graph.pb')
+        model_path = os.path.join(CURRENT_DIR, 'models', model_name, 'frozen_inference_graph.pb')
     if label_path is None:
-            label_path = os.path.join(CURRENT_DIR, 'object_detection', 'data', 'mscoco_label_map.pbtxt')
+        label_path = os.path.join(CURRENT_DIR, 'object_detection', 'data', 'mscoco_label_map.pbtxt')
     # Load a (frozen) Tensorflow model into memory.
     detection_graph = tf.Graph()
     with detection_graph.as_default():
@@ -86,63 +86,108 @@ def get_session_and_model_ready(model_name, width=300, height=300,
     return model_configs
 
 
-def preprocess(model_configs, image_np):
-    image_np_expanded = np.expand_dims(image_np, axis=0)
-    return image_np_expanded
+# def resize_image(input_image, input_height, input_width):
+#     resized_image = cv2.resize(
+#         input_image, (input_height, input_width), interpolation=cv2.INTER_CUBIC)
+#     return resized_image
 
 
-def predict(model_configs, image_path):
+def preprocessing(input_image):
+    # Add the dimension relative to the batch size needed for the input placeholder "x"
+    image_array = np.expand_dims(input_image, axis=0)  # Add batch dimension
+
+    return image_array
+
+
+def predict(model_configs, preprocessed_image):
     detection_boxes = model_configs.get('detection_boxes')
     detection_scores = model_configs.get('detection_scores')
     detection_classes = model_configs.get('detection_classes')
     num_detections = model_configs.get('num_detections')
     image_tensor = model_configs.get('image_tensor')
-    category_index = model_configs.get('category_index')
-    detection_threshold = model_configs.get('detection_threshold')
 
     sess = model_configs.get('session')
-
-    image_np = cv2.imread(image_path, 1)
-    preproc_image_np = preprocess(model_configs, image_np)
-
     (boxes, scores, classes, num) = sess.run(
         [detection_boxes, detection_scores, detection_classes, num_detections],
-        feed_dict={image_tensor: preproc_image_np}
+        feed_dict={image_tensor: preprocessed_image}
     )
-    return json_serializable_output_prediction(boxes, scores, classes, detection_threshold, category_index)
+    return (boxes, scores, classes, num)
 
 
-def json_serializable_output_prediction(boxes, scores, classes, detection_threshold, category_index):
+def post_processing(boxes, scores, classes, detection_threshold, category_index, origin_height, origin_width):
     output = []
-    for box, score, _class in zip(np.squeeze(boxes), np.squeeze(scores), np.squeeze(classes)):
+    for bbox, score, _class in zip(np.squeeze(boxes), np.squeeze(scores), np.squeeze(classes)):
         if score > detection_threshold:
             label = category_index[_class]['name']
+            norm_bbox = normalized_bbox(bbox, origin_height, origin_width)
             obj = {
                 'label': label,
-                'bounding_box': [float(value) for value in box],
+                'bounding_box': norm_bbox,
                 'confidence': float(score)
             }
             output.append(obj)
-    return output
+    return {'data': output}
+
+
+def normalized_bbox(bbox, origin_height, origin_width):
+    # rescale the coordinates to the original image
+    ymin, xmin, ymax, xmax = bbox
+    (left, right, top, bottom) = (xmin * origin_width, xmax * origin_width,
+                                  ymin * origin_height, ymax * origin_height)
+    return (int(left), int(top), int(right), int(bottom))
 
 
 class COCOBasedModel(object):
-    def __init__(self, model_name, tf_gpu_fraction=0.75, lazy_setup=False):
+    def __init__(self, base_configs, lazy_setup=False):
         super(COCOBasedModel, self).__init__()
-        self.tf_gpu_fraction = tf_gpu_fraction
-        self.model_name = model_name
+        self.base_configs = base_configs
         if not lazy_setup:
             self.setup()
 
     def setup(self):
-        download_model(model_name=self.model_name)
+        model_name = self.base_configs['model_name']
+        width = self.base_configs['width']
+        height = self.base_configs['height']
+        # detection_threshold = 0.01
+        detection_threshold = self.base_configs['detection_threshold']
+        allow_memory_growth = self.base_configs['allow_memory_growth']
+        tf_gpu_fraction = self.base_configs['tf_gpu_fraction']
+        download_model(model_name=model_name)
         self.model_configs = get_session_and_model_ready(
-            model_name=self.model_name,
-            tf_gpu_fraction=self.tf_gpu_fraction
-        )
+            model_name=model_name, width=width, height=height,
+            detection_threshold=detection_threshold,
+            allow_memory_growth=allow_memory_growth, tf_gpu_fraction=tf_gpu_fraction)
 
-    def predict(self, image_path):
-        return predict(self.model_configs, image_path)
+    def predict(self, input_image):
+        origin_height, origin_width = input_image.shape[:-1]
+        category_index = self.model_configs['category_index']
+        detection_threshold = self.model_configs['detection_threshold']
+        # resized_image = resize_image(input_image, height, width)
+        preprocessed_image = preprocessing(input_image)
+        (boxes, scores, classes, num) = predict(self.model_configs, preprocessed_image)
+        detections = post_processing(
+            boxes, scores, classes, detection_threshold, category_index,
+            origin_height, origin_width
+        )
+        return detections
 
     def stop(self):
         self.model_configs['session'].close()
+
+    def add_bbboxes_to_image(self, input_image, detections):
+        im_height, im_width = input_image.shape[:-1]
+        output_image = input_image
+        for detection in detections:
+            label = detection['label']
+            confidence = detection['confidence']
+            bbox = detection['bounding_box']
+            color = (254.0, 254.0, 254)
+            output_image = cv2.rectangle(
+                output_image,
+                (bbox[0], bbox[1]), (bbox[2], bbox[3]),
+                color
+            )
+            label_conf = f'{label}: {confidence}'
+            cv2.putText(output_image, label_conf, (bbox[0] - 10, bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+        return output_image
