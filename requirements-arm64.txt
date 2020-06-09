@@ -1,0 +1,4 @@
+-e .
+event-service-utils==1.2.6
+walrus==0.7.1
+python-decouple==3.1
