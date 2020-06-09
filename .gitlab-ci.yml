@@ -60,7 +60,7 @@ Tag Latest:
   script:
     - docker pull "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}"
     - docker tag "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:latest"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
 
 build multiarch:
   stage: multiarch
@@ -75,7 +75,7 @@ build multiarch:
     - docker buildx inspect --bootstrap
   script:
     - update-binfmts --enable # Important: Ensures execution of other binary formats is enabled in the kernel
-    - docker buildx build --platform linux/arm64,linux/amd64 --pull -t "$CI_REGISTRY_IMAGE:latest" --push --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" .
+    - docker buildx build --platform linux/arm64,linux/amd64 --pull -t "$CI_REGISTRY_IMAGE:multiarch" --push --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" .
   when: manual
   tags:
     - multiarch
