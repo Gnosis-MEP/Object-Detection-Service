@@ -86,10 +86,10 @@ def get_session_and_model_ready(model_name, width=300, height=300,
     return model_configs
 
 
-# def resize_image(input_image, input_height, input_width):
-#     resized_image = cv2.resize(
-#         input_image, (input_height, input_width), interpolation=cv2.INTER_CUBIC)
-#     return resized_image
+def resize_image(input_image, input_height, input_width):
+    resized_image = cv2.resize(
+        input_image, (input_height, input_width), interpolation=cv2.INTER_CUBIC)
+    return resized_image
 
 
 def preprocessing(input_image):
@@ -162,8 +162,10 @@ class COCOBasedModel(object):
         origin_height, origin_width = input_image.shape[:-1]
         category_index = self.model_configs['category_index']
         detection_threshold = self.model_configs['detection_threshold']
-        # resized_image = resize_image(input_image, height, width)
-        preprocessed_image = preprocessing(input_image)
+        width = self.base_configs['width']
+        height = self.base_configs['height']
+        resized_image = resize_image(input_image, height, width)
+        preprocessed_image = preprocessing(resized_image)
         (boxes, scores, classes, num) = predict(self.model_configs, preprocessed_image)
         detections = post_processing(
             boxes, scores, classes, detection_threshold, category_index,
@@ -177,7 +179,7 @@ class COCOBasedModel(object):
     def add_bbboxes_to_image(self, input_image, detections):
         im_height, im_width = input_image.shape[:-1]
         output_image = input_image
-        for detection in detections:
+        for detection in detections['data']:
             label = detection['label']
             confidence = detection['confidence']
             bbox = detection['bounding_box']
