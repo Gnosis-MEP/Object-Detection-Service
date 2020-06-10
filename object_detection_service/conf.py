@@ -14,7 +14,7 @@ TRACER_REPORTING_PORT = config('TRACER_REPORTING_PORT', default='6831')
 SERVICE_STREAM_KEY = config('SERVICE_STREAM_KEY')
 SERVICE_CMD_KEY = config('SERVICE_CMD_KEY')
 
-MODEL_NAME = config('MODEL_NAME', default='ssd_mobilenet_v1_coco_2017_11_17')
+MODEL_NAME = config('MODEL_NAME', default='ssd_mobilenet_v1_coco_2018_01_28_rt')
 INPUT_WIDTH = config('INPUT_WIDTH', default=300, cast=int)
 INPUT_HEIGHT = config('INPUT_HEIGHT', default=300, cast=int)
 DETECTION_THRESHOLD = config('DETECTION_THRESHOLD', default=0.5, cast=float)

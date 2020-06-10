@@ -22,6 +22,11 @@ RUN ./multi-arch-pip-install.sh
 ## add all the rest of the code and install the actual package
 ## this should keep the cached layer above if no change to the pipfile or setup.py was done.
 ADD . /service
+RUN cd /service/tf_od_models/object_detection/models && \
+    wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1SX0DlqmJ6E4ULPkDzmrcbhj8NDyzS59M' -O ssd_mobilenet_v1_coco_2018_01_28_rt.tar.gz && \
+    tar -xzf ssd_mobilenet_v1_coco_2018_01_28_rt.tar.gz && \
+    rm -f ssd_mobilenet_v1_coco_2018_01_28_rt.tar.gz
+
 RUN pip install -e . && \
     pip install -e ./tf_od_models && \
     rm -rf /tmp/pip* /root/.cache
