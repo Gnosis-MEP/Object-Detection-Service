@@ -42,20 +42,11 @@ Send to benchmark:
   stage: benchmark
   image: python:3.6
   script:
-    - cd $CI_PROJECT_DIR
-    - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-service $CI_REGISTRY_IMAGE $CI_COMMIT_REF_NAME
+    - "curl -H \"PRIVATE-TOKEN: $SIT_TOKEN\" \"https://gitlab.insight-centre.org/api/v4/projects/2180/repository/files/test_benchmark.py/raw?ref=master\" -o test_benchmark.py"
+    - cat test_benchmark.py
+    - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-ssd-gpu $CI_REGISTRY_IMAGE $CI_COMMIT_REF_NAME
   when: manual
   allow_failure: false
-
-# Send to benchmark:
-#   stage: benchmark
-#   image: python:3.6
-#   script:
-#     - "curl -H \"PRIVATE-TOKEN: $SIT_TOKEN\" \"https://gitlab.insight-centre.org/api/v4/projects/2180/repository/files/test_benchmark.py/raw?ref=master\" -o test_benchmark.py"
-#     - cat test_benchmark.py
-#     - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-service $CI_REGISTRY_IMAGE $CI_COMMIT_REF_NAME
-#   when: manual
-#   allow_failure: false
 
 Tag Latest:
   stage: tag-latest
