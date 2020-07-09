@@ -49,6 +49,7 @@ class ObjectDetectionService(BaseTracerService):
         if not super(ObjectDetectionService, self).process_action(action, event_data, json_msg):
             return False
 
+    @timer_logger
     def get_event_data_image_ndarray(self, event_data):
         img_key = event_data['image_url']
         width = event_data['width']
