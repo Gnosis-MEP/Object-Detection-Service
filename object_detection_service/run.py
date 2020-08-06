@@ -19,6 +19,7 @@ from object_detection_service.conf import (
     DETECTION_THRESHOLD,
     ALLOW_MEMORY_GROWTH,
     DNN_TF_GPU_FRACTION,
+    DNN_HOT_START,
 )
 
 
@@ -45,6 +46,7 @@ def run_service():
         'detection_threshold': DETECTION_THRESHOLD,
         'allow_memory_growth': ALLOW_MEMORY_GROWTH,
         'tf_gpu_fraction': DNN_TF_GPU_FRACTION,
+        'hot_start': DNN_HOT_START
     }
 
     stream_factory = RedisStreamFactory(host=REDIS_ADDRESS, port=REDIS_PORT)

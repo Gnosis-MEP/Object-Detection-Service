@@ -20,5 +20,6 @@ INPUT_HEIGHT = config('INPUT_HEIGHT', default=300, cast=int)
 DETECTION_THRESHOLD = config('DETECTION_THRESHOLD', default=0.5, cast=float)
 ALLOW_MEMORY_GROWTH = config('ALLOW_MEMORY_GROWTH', default=True, cast=bool)
 DNN_TF_GPU_FRACTION = config('DNN_TF_GPU_FRACTION', default=1.0, cast=float)
+DNN_HOT_START = config('DNN_HOT_START', default=True, cast=bool)
 
 LOGGING_LEVEL = config('LOGGING_LEVEL', default='DEBUG')

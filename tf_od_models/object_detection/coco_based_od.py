@@ -144,6 +144,15 @@ class COCOBasedModel(object):
         if not lazy_setup:
             self.setup()
 
+    def _hot_start(self, width, height, rgb_color=(0, 0, 0)):
+        # Create black blank image
+        image = np.zeros((height, width, 3), np.uint8)
+        # Since OpenCV uses BGR, convert the color first
+        color = tuple(reversed(rgb_color))
+        # Fill image with color
+        image[:] = color
+        return self.predict(image)
+
     def setup(self):
         model_name = self.base_configs['model_name']
         width = self.base_configs['width']
@@ -157,6 +166,10 @@ class COCOBasedModel(object):
             model_name=model_name, width=width, height=height,
             detection_threshold=detection_threshold,
             allow_memory_growth=allow_memory_growth, tf_gpu_fraction=tf_gpu_fraction)
+        if self.base_configs['hot_start'] is True:
+            print('Running hot start...')
+            self._hot_start(width, height)
+            print('Finished hot start...')
 
     def predict(self, input_image):
         origin_height, origin_width = input_image.shape[:-1]
