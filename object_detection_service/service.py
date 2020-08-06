@@ -6,9 +6,6 @@ from event_service_utils.logging.decorators import timer_logger
 from event_service_utils.services.tracer import BaseTracerService
 from event_service_utils.tracing.jaeger import init_tracer
 
-# This package is the one inside tf_od_models folder
-from object_detection.coco_based_od import COCOBasedModel
-
 
 class ObjectDetectionService(BaseTracerService):
     def __init__(self,
@@ -35,6 +32,9 @@ class ObjectDetectionService(BaseTracerService):
         self.setup_model(self.dnn_configs)
 
     def setup_model(self, dnn_configs):
+        # This package is the one inside tf_od_models folder
+        from object_detection.coco_based_od import COCOBasedModel
+
         self.model = COCOBasedModel(base_configs=dnn_configs, lazy_setup=False)
 
     @timer_logger

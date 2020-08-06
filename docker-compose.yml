@@ -6,9 +6,11 @@ services:
       - "6379:6379"
 
   service:
-    image: registry.insight-centre.org/sit/mps/object-detection-service:dev
+    image: registry.insight-centre.org/sit/mps/object-detection-service:master
     command: echo "ok"
     runtime: nvidia
+    # volumes:
+      # - "./:/service"
     build:
       context: '.'
       dockerfile: 'Dockerfile'
