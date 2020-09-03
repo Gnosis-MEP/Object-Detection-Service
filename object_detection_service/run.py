@@ -8,6 +8,7 @@ from object_detection_service.service import ObjectDetectionService
 from object_detection_service.conf import (
     REDIS_ADDRESS,
     REDIS_PORT,
+    REDIS_MAX_STREAM_SIZE,
     SERVICE_STREAM_KEY,
     SERVICE_CMD_KEY,
     LOGGING_LEVEL,
@@ -49,7 +50,7 @@ def run_service():
         'hot_start': DNN_HOT_START
     }
 
-    stream_factory = RedisStreamFactory(host=REDIS_ADDRESS, port=REDIS_PORT)
+    stream_factory = RedisStreamFactory(host=REDIS_ADDRESS, port=REDIS_PORT, max_stream_length=REDIS_MAX_STREAM_SIZE)
 
     service = ObjectDetectionService(
         service_stream_key=SERVICE_STREAM_KEY,
