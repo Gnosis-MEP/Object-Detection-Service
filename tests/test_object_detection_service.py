@@ -44,19 +44,19 @@ class TestObjectDetectionService(MockedServiceStreamTestCase):
         SERVICE_CMD_KEY: [],
     }
 
-    # @patch('')
-    @patch('object_detection_service.service.ObjectDetectionService.process_action')
-    def test_process_cmd_should_call_process_action(self, mocked_process_action):
-        action = 'someAction'
-        event_data = {
-            'id': 1,
-            'action': action,
-            'some': 'stuff'
-        }
-        msg_tuple = prepare_event_msg_tuple(event_data)
-        mocked_process_action.__name__ = 'process_action'
-
-        self.service.service_cmd.mocked_values = [msg_tuple]
-        self.service.process_cmd()
-        self.assertTrue(mocked_process_action.called)
-        self.service.process_action.assert_called_once_with(action=action, event_data=event_data, json_msg=msg_tuple[1])
+    # # @patch('')
+    # @patch('object_detection_service.service.ObjectDetectionService.process_action')
+    # def test_process_cmd_should_call_process_action(self, mocked_process_action):
+    #     action = 'someAction'
+    #     event_data = {
+    #         'id': 1,
+    #         'action': action,
+    #         'some': 'stuff'
+    #     }
+    #     msg_tuple = prepare_event_msg_tuple(event_data)
+    #     mocked_process_action.__name__ = 'process_action'
+    #
+    #     self.service.service_cmd.mocked_values = [msg_tuple]
+    #     self.service.process_cmd()
+    #     self.assertTrue(mocked_process_action.called)
+    #     self.service.process_action.assert_called_once_with(action=action, event_data=event_data, json_msg=msg_tuple[1])
