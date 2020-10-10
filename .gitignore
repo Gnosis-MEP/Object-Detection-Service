@@ -115,3 +115,6 @@ dmypy.json
 .pyre/
 
 tf_od_models/object_detection/models/*
+
+# Pycharm files
+.idea/

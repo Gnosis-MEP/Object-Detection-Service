@@ -114,10 +114,16 @@ class ObjectDetectionService(BaseTracerService):
                 'label': label,
                 'confidence': detection['confidence'],
                 'bounding_box': list(detection['bounding_box']),
-                'is_matched': False
+                'is_matched': False,
+                'CENTRE_POINT': list(self.calculate_node_centre_point(list(detection['bounding_box'])))
             }
             graph.add_node(node_id, label.replace(" ", ""), node_attributes)
         graph.commit()
+
+    @staticmethod
+    def calculate_node_centre_point(node_bbox):
+        x1, y1, x2, y2 = [int(i) for i in node_bbox]
+        return int((x1 + x2) / 2), int((y1 + y2) / 2)
 
     @functools.lru_cache(maxsize=5)
     def get_destination_streams(self, destination):
