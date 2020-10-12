@@ -7,12 +7,6 @@ REQUIREMENTS_FILE=requirements.txt
 if [ "$OS_ARCH" == "aarch64" ]; then
     echo "Using simplified requirements for arm64"
     REQUIREMENTS_FILE=requirements-arm64.txt
-elif [ "$BUILD_TYPE" == "gpu" ]; then
-    echo "Using requirements for gpu enabled build"
-    REQUIREMENTS_FILE=requirements-gpu.txt
-elif [ "$BUILD_TYPE" == "no-gpu" ]; then
-    echo "Using requirements for non-gpu enabled build"
-    REQUIREMENTS_FILE=requirements.txt
 else
     echo "Using normal requirements.txt"
 fi
