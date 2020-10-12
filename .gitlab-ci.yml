@@ -26,7 +26,7 @@ Build Image:
     - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" --build-arg BUILD_TYPE="gpu" .
     - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}"
     - docker pull $CI_REGISTRY_IMAGE-no-gpu:${CI_COMMIT_REF_NAME} || echo 'No previous image to download as a base'
-    - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" --build-arg BUILD_TYPE="no-gpu" .
+    - docker build -t "$CI_REGISTRY_IMAGE-no-gpu:${CI_COMMIT_REF_NAME}" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" --build-arg BUILD_TYPE="no-gpu" .
     - docker push "$CI_REGISTRY_IMAGE-no-gpu:${CI_COMMIT_REF_NAME}"
   except:
     - tags
