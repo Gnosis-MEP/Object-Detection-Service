@@ -23,7 +23,9 @@ Build Image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME} || echo 'No previous image to download as a base'
-    - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" .
+    - docker build -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}-gpu" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" .
+    - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}-gpu"
+    - docker build -f Dockerfile.cpu -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" --build-arg SIT_PYPI_USER_VAR="$SIT_PYPI_USER" --build-arg SIT_PYPI_PASS_VAR="$SIT_PYPI_PASS" .
     - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}"
   except:
     - tags
@@ -44,7 +46,7 @@ Send to benchmark:
   script:
     - "curl -H \"PRIVATE-TOKEN: $SIT_TOKEN\" \"https://gitlab.insight-centre.org/api/v4/projects/2180/repository/files/test_benchmark.py/raw?ref=master\" -o test_benchmark.py"
     - cat test_benchmark.py
-    - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-ssd-gpu $CI_REGISTRY_IMAGE $CI_COMMIT_REF_NAME
+    - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-ssd-gpu $CI_REGISTRY_IMAGE ${CI_COMMIT_REF_NAME}-gpu
   when: manual
   allow_failure: false
 
@@ -58,6 +60,9 @@ Tag Latest:
     - docker info
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
+    - docker pull "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}-gpu"
+    - docker tag "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}-gpu" $CI_REGISTRY_IMAGE:latest-gpu
+    - docker push "$CI_REGISTRY_IMAGE:latest-gpu"
     - docker pull "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}"
     - docker tag "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME}" $CI_REGISTRY_IMAGE:latest
     - docker push "$CI_REGISTRY_IMAGE:latest"

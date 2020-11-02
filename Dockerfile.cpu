@@ -1,0 +1,3 @@
+FROM registry.insight-centre.org/sit/mps/docker-images/base-services-tf-gpu:latest
+
+RUN pip install --no-index --find-links /cached_tf_cpu/ tensorflow
