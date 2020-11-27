@@ -6,6 +6,6 @@ setup(
     description='Necessary to make work with underlying requirements from the solution extracted from TF object model zoo. some label-to-int or whatever resolution is required, which is also protobuff based, which makes it necessary to put it in here.',
     author='Felipe Arruda Pontes',
     author_email='felipe.arruda.pontes@insight-centre.org',
-    packages=['object_detection'],
+    packages=['object_detection', 'yolo_ts_core'],
     zip_safe=False
 )

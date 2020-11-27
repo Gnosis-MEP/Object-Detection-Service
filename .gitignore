@@ -118,3 +118,5 @@ tf_od_models/object_detection/models/*
 
 # Pycharm files
 .idea/
+tf_od_models/yolo_ts_core/data/my_data/VOC2028/*
+tf_od_models/yolo_ts_core/data/darknet_weights/*
