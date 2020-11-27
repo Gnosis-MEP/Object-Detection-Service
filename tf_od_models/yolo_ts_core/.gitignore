@@ -61,3 +61,7 @@ __pycache__/
 
 # darknet
 *.weights
+data/logs/*
+data/demo_data/*
+*.zip
+checkpoint/*

@@ -77,7 +77,7 @@ def prepare_model(sess, args):
     return sess, args
 
 
-def run_predict(sess, args, image_data):
+def run_predict(sess, args, image_data, img_path):
     img = image_data['img']
     img_ori = image_data['img_ori']
     height_ori = image_data['height_ori']
@@ -104,8 +104,8 @@ def run_predict(sess, args, image_data):
         x0, y0, x1, y1 = boxes_[i]
         plot_one_box(img_ori, [x0, y0, x1, y1], label=args.classes[labels_[i]], color=args.color_table[labels_[i]])
     # cv2.imshow('Detection result', img_ori)
-
-    cv2.imwrite('detection_result.jpg', img_ori)
+    image_new_path = img_path.replace('.jpg', '_res.jpg')
+    cv2.imwrite(image_new_path, img_ori)
     # cv2.waitKey(0)
     return sess
 
@@ -123,7 +123,7 @@ def main():
         for img in images:
             img_ori = read_image_from_path(img)
             image_data = prepare_image_data(img_ori, args)
-            sess = run_predict(sess, args, image_data)
+            sess = run_predict(sess, args, image_data, img)
     finally:
         sess.close()
 

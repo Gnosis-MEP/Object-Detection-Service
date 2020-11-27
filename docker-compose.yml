@@ -7,7 +7,7 @@ services:
 
   service:
     image: registry.insight-centre.org/sit/mps/object-detection-service:master-gpu
-    command: echo "ok"
+    # command: echo "ok"
     runtime: nvidia
     volumes:
       - "./:/service"
@@ -30,3 +30,8 @@ services:
       - DETECTION_THRESHOLD=0.5
       - ALLOW_MEMORY_GROWTH=True
       - LOGGING_LEVEL=DEBUG
+    working_dir: /service/tf_od_models/yolo_ts_core
+    # execute my version
+    command: python test_single_image.py ./data/demo_data/dog.jpg ./data/demo_data/ohs2.jpg --anchor_path=./data/my_data/anchors_OHS_other.txt --restore_path="./checkpoint/hat_not_hat" --class_name_path=./data/coco-HATS.names
+    # command: python eval.py --anchor_path=./data/my_data/anchors_OHS_other.txt --restore_path="./checkpoint/hat_not_hat" --class_name_path=./data/coco.names --batch_size=10 --prefetech_buffer=5
+
