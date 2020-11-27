@@ -229,11 +229,14 @@ https://github.com/pjreddie/darknet
 
  on the gpu:
 
-python train.py --anchor_path=./data/my_data/anchors_OHS.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=100 --batch_size=20 --save_freq=2 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'&
+python train.py --anchor_path=./data/my_data/anchors_OHS_other.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=100 --batch_size=20 --save_freq=200 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true' --use_warm_up='true' --warm_up_epoch=3
 
 
 my machine:
 python train.py --anchor_path=./data/my_data/anchors_OHS_other.txt --class_name_path=./data/coco.names --total_epoches=100 --batch_size=10 --save_freq=100 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'  --restore_part='None'
+
+next to try:
+python train.py --anchor_path=./data/my_data/anchors_OHS_other.txt --class_name_path=./data/coco.names --total_epoches=100 --batch_size=10 --save_freq=100 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'  --restore_part='None' --learning_rate_init=0.001
 
 
 
