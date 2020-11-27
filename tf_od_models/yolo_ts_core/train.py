@@ -223,7 +223,7 @@ update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 with tf.control_dependencies(update_ops):
     train_op = optimizer.minimize(loss[0], var_list=update_vars, global_step=global_step)
 
-gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.75)
+gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.75) # 0.91
 with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
     sess.run([tf.global_variables_initializer(), tf.local_variables_initializer(), train_iterator.initializer])
     train_handle_value, val_handle_value = sess.run([train_handle, val_handle])

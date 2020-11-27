@@ -10,3 +10,5 @@ services:
       - './:/service/tf_od_models/'
     working_dir: /service/tf_od_models/yolo_ts_core
     command: python train.py --anchor_path=./data/my_data/anchors_OHS_other.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=100 --batch_size=20 --save_freq=200 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true' --use_warm_up='true' --warm_up_epoch=3
+    environment:
+      - PYTHONUNBUFFERED=0
