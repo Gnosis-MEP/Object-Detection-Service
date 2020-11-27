@@ -1,0 +1,10 @@
+version: '2.3'
+services:
+  train:
+    runtime: nvidia
+    image: train-only-tf-yolo:latest
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile'
+    volumes:
+      - './:/service/tf_od_models/'
