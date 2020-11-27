@@ -224,4 +224,17 @@ https://github.com/pjreddie/darknet
 
 
 
- CUDA_VISIBLE_DEVICES=-1 python train.py --anchor_path=./data/my_data/anchors_OHS.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=1000
+ CUDA_VISIBLE_DEVICES=-1 python train.py --anchor_path=./data/my_data/anchors_OHS.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=100 --batch_size=6 --save_freq=10 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'
+
+
+ on the gpu:
+
+python train.py --anchor_path=./data/my_data/anchors_OHS.txt --class_name_path=./data/my_data/OHS_class.names --total_epoches=100 --batch_size=20 --save_freq=2 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'&
+
+
+my machine:
+python train.py --anchor_path=./data/my_data/anchors_OHS_other.txt --class_name_path=./data/coco.names --total_epoches=100 --batch_size=10 --save_freq=100 --val_evaluation_freq=100 --prefetech_buffer=5 --optimizer_name='momentum' --save_optimizer='true'  --restore_part='None'
+
+
+
+python test_single_image.py ./data/demo_data/ohs1.jpg ./data/demo_data/ohs2.jpg --anchor_path=./data/my_data/anchors_OHS.txt --restore_path="./checkpoint/model-step_496_loss_big_lr_0.0001"

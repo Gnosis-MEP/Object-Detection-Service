@@ -3,7 +3,7 @@
 from __future__ import division, print_function
 import sys
 
-# sys.path.append('/service')
+sys.path.append('/service')
 import tensorflow as tf
 import numpy as np
 import argparse
@@ -77,7 +77,7 @@ parser.add_argument("--optimizer_name", type=str, default='adam',
 parser.add_argument("--save_optimizer", type=lambda x: (str(x).lower() == 'true'), default=False,
                     help="Whether to save the optimizer parameters into the checkpoint file.")
 
-parser.add_argument("--learning_rate_init", type=float, default=1e-3,
+parser.add_argument("--learning_rate_init", type=float, default=1e-4,
                     help="The initial learning rate.")
 
 parser.add_argument("--lr_type", type=str, default='fixed',
@@ -118,7 +118,8 @@ args.train_img_cnt = len(open(args.train_file, 'r').readlines())
 args.val_img_cnt = len(open(args.val_file, 'r').readlines())
 args.train_batch_num = int(np.ceil(float(args.train_img_cnt) / args.batch_size))
 args.val_batch_num = int(np.ceil(float(args.val_img_cnt) / args.batch_size))
-
+# print(args.restore_part)
+# exit()
 # setting loggers
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%a, %d %b %Y %H:%M:%S', filename=args.progress_log_path, filemode='w')
@@ -222,7 +223,7 @@ update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 with tf.control_dependencies(update_ops):
     train_op = optimizer.minimize(loss[0], var_list=update_vars, global_step=global_step)
 
-gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8, allow_growth=False)
+gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.75)
 with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
     sess.run([tf.global_variables_initializer(), tf.local_variables_initializer(), train_iterator.initializer])
     train_handle_value, val_handle_value = sess.run([train_handle, val_handle])
@@ -256,8 +257,12 @@ with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
             # start to save
             # NOTE: this is just demo. You can set the conditions when to save the weights.
             if global_step_ % args.save_freq == 0 and global_step_ > 0:
-                if loss_[0] <= 2.:
-                    saver_to_save.save(sess, args.save_dir + 'model-step_{}_loss_{:4f}_lr_{:.7g}'.format(global_step_, loss_[0], lr))
+                fixed_loss_save = '{:4f}'.format(loss_[0])
+                if loss_[0] > 100:
+                    fixed_loss_save = 'big'
+                save_name = 'model-step_{}_loss_{}_lr_{:.7g}'.format(global_step_, fixed_loss_save, lr)
+                # if loss_[0] <= 2.:
+                saver_to_save.save(sess, args.save_dir + save_name)
 
             # switch to validation dataset for evaluation
             if global_step_ % args.val_evaluation_freq == 0 and global_step_ > 0:
