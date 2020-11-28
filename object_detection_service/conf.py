@@ -27,6 +27,7 @@ SERVICE_STREAM_KEY = config('SERVICE_STREAM_KEY')
 SERVICE_CMD_KEY = config('SERVICE_CMD_KEY')
 
 MODEL_NAME = config('MODEL_NAME', default='ssd_mobilenet_v1_coco_2017_11_17_rt')
+MODEL_TYPE = config('MODEL_TYPE', default='tf_model_zoo')
 INPUT_WIDTH = config('INPUT_WIDTH', default=300, cast=int)
 INPUT_HEIGHT = config('INPUT_HEIGHT', default=300, cast=int)
 DETECTION_THRESHOLD = config('DETECTION_THRESHOLD', default=0.5, cast=float)

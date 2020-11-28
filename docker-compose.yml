@@ -6,11 +6,36 @@ services:
       - "6379:6379"
 
   service:
-    image: registry.insight-centre.org/sit/mps/object-detection-service:master
-    command: echo "ok"
+    image: registry.insight-centre.org/sit/mps/object-detection-service:master-gpu
+    # depends_on:
+    #   - redis
+    # command: echo "ok"
     runtime: nvidia
-    # volumes:
-      # - "./:/service"
+    volumes:
+      - "./:/service"
     build:
       context: '.'
       dockerfile: 'Dockerfile'
+    environment:
+      - REDIS_ADDRESS=172.17.0.1
+      - REDIS_PORT=${REDIS_PORT}
+      - SERVICE_STREAM_KEY=${SERVICE_STREAM_KEY}
+      - SERVICE_CMD_KEY=${SERVICE_CMD_KEY}
+      - TRACER_REPORTING_HOST=${TRACER_REPORTING_HOST}
+      - TRACER_REPORTING_PORT=${TRACER_REPORTING_PORT}
+      - PYTHONUNBUFFERED=0
+      - CUDA_VISIBLE_DEVICES=0
+      - GPU_SUPPORT_FLAG=1
+      - MODEL_NAME=hat_not_hat
+      - MODEL_TYPE=yolov3
+      - INPUT_WIDTH=300
+      - INPUT_HEIGHT=300
+      - DNN_TF_GPU_FRACTION=0.85
+      - DETECTION_THRESHOLD=0.5
+      - ALLOW_MEMORY_GROWTH=True
+      - LOGGING_LEVEL=DEBUG
+    working_dir: /service/tf_od_models/yolo_ts_core
+    # execute my version
+    command: python test_single_image.py ./data/demo_data/dog.jpg ./data/demo_data/ohs2.jpg --anchor_path=./data/my_data/anchors_OHS_other.txt --restore_path="./checkpoint/hat_not_hat" --class_name_path=./data/coco-HATS.names
+    # command: python eval.py --anchor_path=./data/my_data/anchors_OHS_other.txt --restore_path="./checkpoint/hat_not_hat" --class_name_path=./data/coco.names --batch_size=10 --prefetech_buffer=5
+

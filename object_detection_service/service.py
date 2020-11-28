@@ -35,9 +35,12 @@ class ObjectDetectionService(BaseTracerService):
 
     def setup_model(self, dnn_configs):
         # This package is the one inside tf_od_models folder
-        from tf_od_models.object_detection.coco_based_od import COCOBasedModel
+        if dnn_configs['model_type'] == 'tf_model_zoo':
+            from tf_od_models.object_detection.coco_based_od import COCOBasedModel as Model
+        elif dnn_configs['model_type'] == 'yolov3':
+            from tf_od_models.yolo_ts_core.model_loader import YoloBasedModel as Model
 
-        self.model = COCOBasedModel(base_configs=dnn_configs, lazy_setup=False)
+        self.model = Model(base_configs=dnn_configs, lazy_setup=False)
 
     @timer_logger
     def process_data_event(self, event_data, json_msg):
@@ -99,7 +102,9 @@ class ObjectDetectionService(BaseTracerService):
 
         #enriched_event_data['vekg'] = self.update_vekg(enriched_event_data['vekg'], model_result)
         vekg_id = str(uuid.uuid4())
+
         self.create_graph_with_model_results(vekg_id, model_result)
+        enriched_event_data['vekg'] = self.update_vekg(enriched_event_data['vekg'], model_result)
         enriched_event_data['vekg_id'] = vekg_id
 
         return enriched_event_data

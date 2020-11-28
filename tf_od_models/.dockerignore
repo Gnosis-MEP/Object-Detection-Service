@@ -1,0 +1,6 @@
+dist/*
+*.egg-info/*
+.env
+Dockerfile
+./yolo_ts_core/data
+*.zip
