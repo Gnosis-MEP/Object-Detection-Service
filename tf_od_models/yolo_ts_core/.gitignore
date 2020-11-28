@@ -65,3 +65,4 @@ data/logs/*
 data/demo_data/*
 *.zip
 checkpoint/*
+models/*
