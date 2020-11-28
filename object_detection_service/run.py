@@ -15,6 +15,7 @@ from object_detection_service.conf import (
     TRACER_REPORTING_HOST,
     TRACER_REPORTING_PORT,
     MODEL_NAME,
+    MODEL_TYPE,
     INPUT_WIDTH,
     INPUT_HEIGHT,
     DETECTION_THRESHOLD,
@@ -47,7 +48,8 @@ def run_service():
         'detection_threshold': DETECTION_THRESHOLD,
         'allow_memory_growth': ALLOW_MEMORY_GROWTH,
         'tf_gpu_fraction': DNN_TF_GPU_FRACTION,
-        'hot_start': DNN_HOT_START
+        'hot_start': DNN_HOT_START,
+        'model_type': MODEL_TYPE,
     }
 
     stream_factory = RedisStreamFactory(host=REDIS_ADDRESS, port=REDIS_PORT, max_stream_length=REDIS_MAX_STREAM_SIZE)

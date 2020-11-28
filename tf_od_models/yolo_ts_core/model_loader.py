@@ -221,6 +221,11 @@ class YoloBasedModel(COCOBasedModel):
             origin_height, origin_width,
             height, width
         )
+
+        # bb_img = self.add_bbboxes_to_image(input_image, detections)
+
+        # image_new_path = 'result.jpg'
+        # cv2.imwrite(image_new_path, bb_img)
         return detections
 
 
