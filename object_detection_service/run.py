@@ -53,7 +53,6 @@ def run_service():
     }
 
     stream_factory = RedisStreamFactory(host=REDIS_ADDRESS, port=REDIS_PORT, max_stream_length=REDIS_MAX_STREAM_SIZE)
-    graph_engine_factory = GraphEngineFactory(host=REDIS_ADDRESS, port=REDIS_PORT)
 
     service = ObjectDetectionService(
         service_stream_key=SERVICE_STREAM_KEY,
@@ -62,7 +61,6 @@ def run_service():
         dnn_configs=dnn_configs,
         stream_factory=stream_factory,
         logging_level=LOGGING_LEVEL,
-        graph_engine_factory=graph_engine_factory,
         tracer_configs=tracer_configs
     )
     service.run()

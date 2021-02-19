@@ -14,7 +14,6 @@ class ObjectDetectionService(BaseTracerService):
                  dnn_configs,
                  stream_factory,
                  logging_level,
-                 graph_engine_factory,
                  tracer_configs):
         tracer = init_tracer(self.__class__.__name__, **tracer_configs)
         super(ObjectDetectionService, self).__init__(
@@ -28,7 +27,6 @@ class ObjectDetectionService(BaseTracerService):
         self.cmd_validation_fields = ['id', 'action']
         self.data_validation_fields = ['id', 'image_url', 'data_flow', 'data_path', 'width', 'height', 'color_channels']
 
-        self.graph_engine = graph_engine_factory.create('redis_graph')
         self.fs_client = file_storage_cli
         self.dnn_configs = dnn_configs
         self.setup_model(self.dnn_configs)
@@ -100,35 +98,9 @@ class ObjectDetectionService(BaseTracerService):
         self.logger.debug('Enriching event data with model result')
         enriched_event_data = event_data.copy()
 
-        #enriched_event_data['vekg'] = self.update_vekg(enriched_event_data['vekg'], model_result)
-        vekg_id = str(uuid.uuid4())
-
-        self.create_graph_with_model_results(vekg_id, model_result)
         enriched_event_data['vekg'] = self.update_vekg(enriched_event_data['vekg'], model_result)
-        enriched_event_data['vekg_id'] = vekg_id
 
         return enriched_event_data
-
-    def create_graph_with_model_results(self, vekg_id, model_result):
-        graph = self.graph_engine.get_graph_instance(vekg_id)
-        for detection in model_result['data']:
-            node_id = str(uuid.uuid4())
-            label = detection['label'].upper()
-            node_attributes = {
-                'id': node_id,
-                'label': label,
-                'confidence': detection['confidence'],
-                'bounding_box': list(detection['bounding_box']),
-                'is_matched': False,
-                'CENTRE_POINT': list(self.calculate_node_centre_point(list(detection['bounding_box'])))
-            }
-            graph.add_node(node_id, label.replace(" ", ""), node_attributes)
-        graph.commit()
-
-    @staticmethod
-    def calculate_node_centre_point(node_bbox):
-        x1, y1, x2, y2 = [int(i) for i in node_bbox]
-        return int((x1 + x2) / 2), int((y1 + y2) / 2)
 
     @functools.lru_cache(maxsize=5)
     def get_destination_streams(self, destination):
