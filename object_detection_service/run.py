@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from event_service_utils.streams.redis import RedisStreamFactory
 from event_service_utils.img_serialization.redis import RedisImageCache
-from object_detection_service.graph.engine import GraphEngineFactory
 
 from object_detection_service.service import ObjectDetectionService
 
