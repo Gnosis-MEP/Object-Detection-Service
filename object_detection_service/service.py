@@ -3,15 +3,17 @@ import threading
 import uuid
 
 from event_service_utils.logging.decorators import timer_logger
-from event_service_utils.services.tracer import BaseTracerService
+from event_service_utils.services.registry import BaseRegistryService
 from event_service_utils.tracing.jaeger import init_tracer
 
 
-class ObjectDetectionService(BaseTracerService):
+class ObjectDetectionService(BaseRegistryService):
     def __init__(self,
                  service_stream_key, service_cmd_key,
                  file_storage_cli,
                  dnn_configs,
+                 service_registry_cmd_key,
+                 service_details,
                  stream_factory,
                  logging_level,
                  tracer_configs):
@@ -20,6 +22,8 @@ class ObjectDetectionService(BaseTracerService):
             name=self.__class__.__name__,
             service_stream_key=service_stream_key,
             service_cmd_key=service_cmd_key,
+            service_registry_cmd_key=service_registry_cmd_key,
+            service_details=service_details,
             stream_factory=stream_factory,
             logging_level=logging_level,
             tracer=tracer,

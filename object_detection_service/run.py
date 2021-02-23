@@ -10,6 +10,8 @@ from object_detection_service.conf import (
     REDIS_MAX_STREAM_SIZE,
     SERVICE_STREAM_KEY,
     SERVICE_CMD_KEY,
+    SERVICE_REGISTRY_CMD_KEY,
+    SERVICE_DETAILS,
     LOGGING_LEVEL,
     TRACER_REPORTING_HOST,
     TRACER_REPORTING_PORT,
@@ -56,6 +58,8 @@ def run_service():
     service = ObjectDetectionService(
         service_stream_key=SERVICE_STREAM_KEY,
         service_cmd_key=SERVICE_CMD_KEY,
+        service_registry_cmd_key=SERVICE_REGISTRY_CMD_KEY,
+        service_details=SERVICE_DETAILS,
         file_storage_cli=file_storage_cli,
         dnn_configs=dnn_configs,
         stream_factory=stream_factory,

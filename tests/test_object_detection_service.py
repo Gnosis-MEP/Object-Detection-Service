@@ -8,6 +8,8 @@ from object_detection_service.service import ObjectDetectionService
 from object_detection_service.conf import (
     SERVICE_STREAM_KEY,
     SERVICE_CMD_KEY,
+    SERVICE_REGISTRY_CMD_KEY,
+    SERVICE_DETAILS,
 )
 
 
@@ -17,24 +19,14 @@ class TestObjectDetectionService(MockedServiceStreamTestCase):
         with patch('object_detection_service.service.ObjectDetectionService.setup_model') as mocked_setup_model:
             self.service = super(TestObjectDetectionService, self).instantiate_service()
             return self.service
-        # service_kwargs = self.service_config.copy()
-        # # quickfix by piyush for testcase of window-manager
-        # if 'no_stream_factory_flag' not in service_kwargs:
-        #     service_kwargs.update({'stream_factory': self.stream_factory})
-        # else:
-        #     del service_kwargs['no_stream_factory_flag']
-        # with patch('event_service_utils.tracing.jaeger.init_tracer') as mockedTracer:
-        #     self.service = self.service_cls(**service_kwargs)
-        #     if hasattr(self.service, 'tracer') and self.service.tracer:
-        #         self.service.tracer.close()
-        #     self.service.tracer = mockedTracer
-        # return self.service
 
     GLOBAL_SERVICE_CONFIG = {
         'service_stream_key': SERVICE_STREAM_KEY,
         'service_cmd_key': SERVICE_CMD_KEY,
         'dnn_configs': {'model_name': 'etc'},
         'file_storage_cli': None,
+        'service_registry_cmd_key': SERVICE_REGISTRY_CMD_KEY,
+        'service_details': SERVICE_DETAILS,
         'logging_level': 'ERROR',
         'tracer_configs': {'reporting_host': None, 'reporting_port': None},
     }
