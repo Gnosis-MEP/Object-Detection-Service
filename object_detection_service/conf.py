@@ -1,6 +1,6 @@
 import os
 
-from decouple import config
+from decouple import config, Csv
 
 
 def int_or_none(val):
@@ -33,6 +33,7 @@ SERVICE_DETAILS_QUEUE_LIMIT = config('SERVICE_DETAILS_QUEUE_LIMIT', cast=int)
 SERVICE_DETAILS_THROUGHPUT = config('SERVICE_DETAILS_THROUGHPUT', cast=float)
 SERVICE_DETAILS_ACCURACY = config('SERVICE_DETAILS_ACCURACY', cast=float)
 SERVICE_DETAILS_ENERGY_CONSUMPTION = config('SERVICE_DETAILS_ENERGY_CONSUMPTION', cast=float)
+SERVICE_DETAILS_CONTENT_TYPES = config('SERVICE_DETAILS_CONTENT_TYPES', cast=Csv())
 
 
 SERVICE_DETAILS = {
@@ -42,6 +43,7 @@ SERVICE_DETAILS = {
     'throughput': SERVICE_DETAILS_THROUGHPUT,
     'accuracy': SERVICE_DETAILS_ACCURACY,
     'energy_consumption': SERVICE_DETAILS_ENERGY_CONSUMPTION,
+    'content_types': SERVICE_DETAILS_CONTENT_TYPES
 }
 
 MODEL_NAME = config('MODEL_NAME', default='ssd_mobilenet_v1_coco_2017_11_17_rt')
