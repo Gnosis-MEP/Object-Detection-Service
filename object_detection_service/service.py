@@ -3,17 +3,16 @@ import threading
 import uuid
 
 from event_service_utils.logging.decorators import timer_logger
-from event_service_utils.services.registry import BaseRegistryService
+from event_service_utils.services.event_driven import BaseEventDrivenCMDService
 from event_service_utils.tracing.jaeger import init_tracer
 
 
-class ObjectDetectionService(BaseRegistryService):
+class ObjectDetectionService(BaseEventDrivenCMDService):
     def __init__(self,
-                 service_stream_key, service_cmd_key,
+                 service_stream_key, service_cmd_key_list,
+                 pub_event_list, service_details,
                  file_storage_cli,
                  dnn_configs,
-                 service_registry_cmd_key,
-                 service_details,
                  stream_factory,
                  logging_level,
                  tracer_configs):
@@ -21,14 +20,14 @@ class ObjectDetectionService(BaseRegistryService):
         super(ObjectDetectionService, self).__init__(
             name=self.__class__.__name__,
             service_stream_key=service_stream_key,
-            service_cmd_key=service_cmd_key,
-            service_registry_cmd_key=service_registry_cmd_key,
+            service_cmd_key_list=service_cmd_key_list,
+            pub_event_list=pub_event_list,
             service_details=service_details,
             stream_factory=stream_factory,
             logging_level=logging_level,
             tracer=tracer,
         )
-        self.cmd_validation_fields = ['id', 'action']
+        self.cmd_validation_fields = ['id']
         self.data_validation_fields = ['id', 'image_url', 'data_flow', 'data_path', 'width', 'height', 'color_channels']
 
         self.fs_client = file_storage_cli
@@ -135,9 +134,6 @@ class ObjectDetectionService(BaseRegistryService):
     def run(self):
         self.log_state()
         super(ObjectDetectionService, self).run()
-        self.cmd_thread = threading.Thread(target=self.run_forever, args=(self.process_cmd,))
         self.data_thread = threading.Thread(target=self.run_forever, args=(self.process_data,))
-        self.cmd_thread.start()
         self.data_thread.start()
-        self.cmd_thread.join()
         self.data_thread.join()

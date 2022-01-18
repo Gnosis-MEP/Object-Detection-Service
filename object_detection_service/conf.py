@@ -46,6 +46,15 @@ SERVICE_DETAILS = {
     'content_types': SERVICE_DETAILS_CONTENT_TYPES
 }
 
+SERVICE_CMD_KEY_LIST = []
+
+PUB_EVENT_TYPE_SERVICE_WORKER_ANNOUNCED = config('PUB_EVENT_TYPE_SERVICE_WORKER_ANNOUNCED')
+
+PUB_EVENT_LIST = [
+    PUB_EVENT_TYPE_SERVICE_WORKER_ANNOUNCED,
+]
+
+
 MODEL_NAME = config('MODEL_NAME', default='ssd_mobilenet_v1_coco_2017_11_17_rt')
 MODEL_TYPE = config('MODEL_TYPE', default='tf_model_zoo')
 INPUT_WIDTH = config('INPUT_WIDTH', default=300, cast=int)
