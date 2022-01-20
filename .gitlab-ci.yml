@@ -7,8 +7,6 @@ stages:
 
 variables:
   SERVICE_STREAM_KEY: od-data
-  SERVICE_CMD_KEY: od-cmd
-  SERVICE_REGISTRY_CMD_KEY: sr-cmd
   SERVICE_DETAILS_SERVICE_TYPE: ObjectDetection
   SERVICE_DETAILS_CONTENT_TYPES: "node_attribute:bounding_box,node_attribute:label,node_attribute:confidence,node:person,node:car"
   SERVICE_DETAILS_STREAM_KEY: od2-data
