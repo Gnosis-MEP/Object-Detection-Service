@@ -1,19 +1,19 @@
 from unittest.mock import patch
 
-from event_service_utils.tests.base_test_case import MockedServiceStreamTestCase
+from event_service_utils.tests.base_test_case import MockedEventDrivenServiceStreamTestCase
 from event_service_utils.tests.json_msg_helper import prepare_event_msg_tuple
 
 from object_detection_service.service import ObjectDetectionService
 
 from object_detection_service.conf import (
     SERVICE_STREAM_KEY,
-    SERVICE_CMD_KEY,
-    SERVICE_REGISTRY_CMD_KEY,
+    SERVICE_CMD_KEY_LIST,
     SERVICE_DETAILS,
+    PUB_EVENT_LIST,
 )
 
 
-class TestObjectDetectionService(MockedServiceStreamTestCase):
+class TestObjectDetectionService(MockedEventDrivenServiceStreamTestCase):
 
     def instantiate_service(self):
         with patch('object_detection_service.service.ObjectDetectionService.setup_model') as mocked_setup_model:
@@ -22,32 +22,38 @@ class TestObjectDetectionService(MockedServiceStreamTestCase):
 
     GLOBAL_SERVICE_CONFIG = {
         'service_stream_key': SERVICE_STREAM_KEY,
-        'service_cmd_key': SERVICE_CMD_KEY,
+        'service_cmd_key_list': SERVICE_CMD_KEY_LIST,
+        'pub_event_list': PUB_EVENT_LIST,
+        'service_details': SERVICE_DETAILS,
         'dnn_configs': {'model_name': 'etc'},
         'file_storage_cli': None,
-        'service_registry_cmd_key': SERVICE_REGISTRY_CMD_KEY,
-        'service_details': SERVICE_DETAILS,
         'logging_level': 'ERROR',
         'tracer_configs': {'reporting_host': None, 'reporting_port': None},
     }
     SERVICE_CLS = ObjectDetectionService
+    MOCKED_CG_STREAM_DICT = {
+
+    }
     MOCKED_STREAMS_DICT = {
         SERVICE_STREAM_KEY: [],
-        SERVICE_CMD_KEY: [],
+        'cg-ObjectDetectionService': MOCKED_CG_STREAM_DICT,
     }
 
-    @patch('object_detection_service.service.ObjectDetectionService.process_action')
-    def test_process_cmd_should_call_process_action(self, mocked_process_action):
-        action = 'someAction'
+    @patch('object_detection_service.service.ObjectDetectionService.process_event_type')
+    def test_process_cmd_should_call_process_event_type(self, mocked_process_event_type):
+        event_type = 'SomeEventType'
+        unicode_event_type = event_type.encode('utf-8')
         event_data = {
             'id': 1,
-            'action': action,
+            'action': event_type,
             'some': 'stuff'
         }
         msg_tuple = prepare_event_msg_tuple(event_data)
-        mocked_process_action.__name__ = 'process_action'
+        mocked_process_event_type.__name__ = 'process_event_type'
 
-        self.service.service_cmd.mocked_values = [msg_tuple]
+        self.service.service_cmd.mocked_values_dict = {
+            unicode_event_type: [msg_tuple]
+        }
         self.service.process_cmd()
-        self.assertTrue(mocked_process_action.called)
-        self.service.process_action.assert_called_once_with(action=action, event_data=event_data, json_msg=msg_tuple[1])
+        self.assertTrue(mocked_process_event_type.called)
+        self.service.process_event_type.assert_called_once_with(event_type=event_type, event_data=event_data, json_msg=msg_tuple[1])
