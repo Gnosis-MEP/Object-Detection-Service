@@ -15,6 +15,7 @@ variables:
   SERVICE_DETAILS_ACCURACY: "0.9"
   SERVICE_DETAILS_ENERGY_CONSUMPTION: "108"
   PUB_EVENT_TYPE_SERVICE_WORKER_ANNOUNCED: ServiceWorkerAnnounced
+  BENCHMARK_TEMPLATE_NAME: default
   LOGGING_LEVEL: DEBUG
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
@@ -47,15 +48,14 @@ test:
   - pipenv --version
   - ./run_tests.sh
 
-# Send to benchmark:
-#   stage: benchmark
-#   image: python:3.6
-#   script:
-#     - "curl -H \"PRIVATE-TOKEN: $SIT_TOKEN\" \"https://gitlab.insight-centre.org/api/v4/projects/2180/repository/files/test_benchmark.py/raw?ref=master\" -o test_benchmark.py"
-#     - cat test_benchmark.py
-#     - python test_benchmark.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} object-detection-ssd-gpu $CI_REGISTRY_IMAGE ${CI_COMMIT_REF_NAME}-gpu
-#   when: manual
-#   allow_failure: false
+Send to benchmark:
+  stage: benchmark
+  image: python:3.6
+  script:
+    - "curl -H \"PRIVATE-TOKEN: $SIT_TOKEN\" \"https://gitlab.insight-centre.org/api/v4/projects/2180/repository/files/test_benchmark_from_template.py/raw?ref=master\" -o test_benchmark_from_template.py"
+    - python test_benchmark_from_template.py ${BENCHMARK_PLATFORM_CONTROLLER_URL} ${BENCHMARK_TEMPLATE_NAME} object-detection-ssd-gpu $CI_REGISTRY_IMAGE $CI_COMMIT_REF_NAME
+  when: manual
+  allow_failure: false
 
 Tag Latest:
   stage: tag-latest
